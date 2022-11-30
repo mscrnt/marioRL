@@ -9,7 +9,7 @@ from gym.wrappers import GrayScaleObservation
 # Import Vectorization Wrappers
 from stable_baselines3.common.vec_env import VecFrameStack, DummyVecEnv
 # Import os for file path management
-import os
+import os 
 # Import PPO for algos
 from stable_baselines3 import PPO
 # Import Base Callback for saving models
@@ -24,25 +24,10 @@ env = JoypadSpace(env, SIMPLE_MOVEMENT)
 # Create a flag - restart or not
 done = True
 
-print("Verifying game loads...")
-# Loop through each frame in the game
-for step in range(1000):
-    # Start the game to begin with
-    if done:
-        # Start the gamee
-        env.reset()
-    # Do random actions
-    state, reward, done, info = env.step(env.action_space.sample())
-    # Show the game on the screen
-    env.render()
-# Close the game
-env.close()
-
-
 print("Initializing environment...")
 # 1. Create the base environment
 env = gym_super_mario_bros.make('SuperMarioBros-v0')
-# 2. Simplify the controls
+# 2. Simplify the controls 
 env = JoypadSpace(env, SIMPLE_MOVEMENT)
 # 3. Grayscale
 env = GrayScaleObservation(env, keep_dim=True)
@@ -80,27 +65,16 @@ LOG_DIR = './logs/'
 # Setup model saving callback
 callback = TrainAndLoggingCallback(check_freq=100000, save_path=CHECKPOINT_DIR)
 
-# This is the AI model started
-# This is where we check if there is a save files. We either load it or start a new AI Model
+# Load model
+model = PPO.load('./Latest_Saved_Checkpoint.zip')
 
-checkpoint_exists = os.path.exists('./Latest_Saved_Checkpoint.zip')
-print("Checkpoint exists? " + str(checkpoint_exists))
-if checkpoint_exists == True:
-    print('Loading Checkpoint')
-    model = PPO.load('./Latest_Saved_Checkpoint.zip', env=env)
-else:
-    print("No checkpoint found. Starting fresh.")
-    model = PPO('CnnPolicy', env, verbose=1, tensorboard_log=LOG_DIR, learning_rate=0.000001,
-            n_steps=512)
+state = env.reset()
 
-
-# Train the AI model, this is where the AI model starts to learn
-
-print("Training started. Please wait. This will take a while...")
-# Change 'total_timesteps' to modify training time.
-model.learn(total_timesteps=10000000, callback=callback, reset_num_timesteps=False)
-
-model.save('Latest_Saved_Checkpoint')
-
-print("Training Complete.")
-
+# Start the game 
+state = env.reset()
+# Loop through the game
+while True: 
+    
+    action, _ = model.predict(state)
+    state, reward, done, info = env.step(action)
+    env.render()
