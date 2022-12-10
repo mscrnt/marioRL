@@ -290,20 +290,8 @@ class DQNAgent:
         
 def show_state(env, ep=0, info=""):
     env.render(mode="human")
-    time.sleep(0.02)
+    time.sleep(0.001)
 
-    """While testing show the mario playing environment
-    plt.figure(3)
-    plt.clf()
-    plt.imshow(env.render(mode="rgb_array"))
-    plt.title("Episode: %d %s" % (ep, info))
-    plt.axis('off')
-
-    display.clear_output(wait=True)
-    display.display(plt.gcf())
-    """
-    
-    
     
 def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_max=1):
    
@@ -391,4 +379,4 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
 #run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=50000, exploration_max = 1)
 
 # For Testing
-run(training_mode=False, pretrained=True, double_dqn=True, num_episodes=100, exploration_max = 0.05)
+run(training_mode=False, pretrained=True, double_dqn=True, num_episodes=1000, exploration_max = .05)

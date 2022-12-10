@@ -12,6 +12,7 @@ import collections
 import cv2
 import time
 import pylab as pl
+import os
 
 class MaxAndSkipEnv(gym.Wrapper):
     """
@@ -202,6 +203,7 @@ class DQNAgent:
             self.DONE_MEM = torch.zeros(max_memory_size, 1)
             self.ending_position = 0
             self.num_in_queue = 0
+
         
         self.memory_sample_size = batch_size
         
@@ -288,9 +290,8 @@ class DQNAgent:
         
 def show_state(env, ep=0, info=""):
     env.render()
-    time.sleep(0.001)
-
-    
+    #time.sleep(0.001)
+  
 def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_max=1):
    
     env = gym_super_mario_bros.make('SuperMarioBros-v0')
@@ -302,7 +303,7 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
                      max_memory_size=30000,
                      batch_size=32,
                      gamma=0.90,
-                     lr=0.00025,
+                     lr=0.000001,#000025
                      dropout=0.2,
                      exploration_max=1.0,
                      exploration_min=0.02,
@@ -345,15 +346,58 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
             if terminal:
                 break
 
-        total_rewards.append(total_reward)
+        total_rewards.append(total_reward) 
+
+    total_episodes = 0
         
+    if os.path.exists('./total_episodes.txt'):
+        with open('./total_episodes.txt', 'r') as f:
+            total_episodes = f.read()
+            tot_epi_int = int(total_episodes)
+    else:
+        tot_epi_int = 0
+                   
+    curret_episode = int(num_episodes) + tot_epi_int
 
-        if ep_num != 0 and ep_num % 100 == 0:
-            print("Episode {} score = {}, average score = {}".format(ep_num + 1, total_rewards[-1], np.mean(total_rewards)))
-        num_episodes += 1  
+    if os.path.exists('./attempts.txt'):
+        os.remove('./attempts.txt')
+    else:
+        with open('./attempts.txt', 'w', encoding='utf-8') as outfile:
+            outfile.write(str(curret_episode))
+    
+    if os.path.exists('./total_episodes.txt'):
+        f.close()
 
-        
+    if os.path.exists('./total_episodes.txt'):
+        os.remove('./total_episodes.txt')
+    
+    with open('./total_episodes.txt', 'w', encoding='utf-8') as outfile:
+        outfile.write(str(curret_episode)) 
 
+    if os.path.exists('./message.txt'):
+        os.remove('./message.txt')
+    
+    with open('./message.txt', 'w', encoding='utf-8') as outfile:
+        outfile.write("Mario has used " + str(curret_episode) + "+ continues.") 
+
+    if os.path.exists('./previous_rewards.txt'):
+        with open('./previous_rewards.txt', 'r') as f:
+            previous_cache = f.read()
+            previous_rewards = int(previous_cache)
+    else:
+        previous_rewards = 0
+    
+    with open('./average.txt', 'w', encoding='utf-8') as outfile:
+        outfile.write("Previous Reward Avg: {} | Current Reward Avg:{}".format(int(previous_rewards), int(np.mean(total_rewards)))) 
+
+    f.close()
+
+    if os.path.exists('./previous_rewards.txt'):
+        os.remove('./previous_rewards.txt')
+    
+    with open('./previous_rewards.txt', 'w', encoding='utf-8') as outfile:
+        outfile.write(str(int(np.mean(total_rewards))))  
+    
 
     print("Episode {} score = {}, average score = {}".format(ep_num + 1, total_rewards[-1], np.mean(total_rewards)))
     
@@ -378,7 +422,7 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
     env.close()
 
 # For training
-for n in range(10):
+for n in range(500):
     run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=100, exploration_max = 1)
 
 

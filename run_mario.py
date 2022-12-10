@@ -66,12 +66,12 @@ LOG_DIR = './logs/'
 callback = TrainAndLoggingCallback(check_freq=100000, save_path=CHECKPOINT_DIR)
 
 # Load model
-model = PPO.load('./Latest_Saved_Checkpoint.zip')
+model = PPO.load('./train/best_model_6000000.zip')
 
-state = env.reset()
+
 
 # Start the game 
-state = env.reset()
+
 # Loop through the game
 while True: 
     
