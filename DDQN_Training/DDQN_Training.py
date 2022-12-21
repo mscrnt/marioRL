@@ -161,7 +161,7 @@ class DQNAgent:
         self.action_space = action_space
         self.double_dqn = double_dqn
         self.pretrained = pretrained
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda' #if torch.cuda.is_available() else 'cpu'
         
         # Double DQN network
         if self.double_dqn:  
@@ -300,8 +300,8 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
     action_space = env.action_space.n
     agent = DQNAgent(state_space=observation_space,
                      action_space=action_space,
-                     max_memory_size=30000,
-                     batch_size=32,
+                     max_memory_size=60000,
+                     batch_size=64,
                      gamma=0.90,
                      lr=0.000001,#000025
                      dropout=0.2,
@@ -423,6 +423,6 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
 
 # For training
 for n in range(500):
-    run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=100, exploration_max = 1)
+    run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=100, exploration_max = 1)
 
 
