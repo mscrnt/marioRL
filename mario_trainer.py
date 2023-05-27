@@ -104,7 +104,7 @@ class CustomRewardEnv(gym.Wrapper):
         # Move left if Mario hasn't moved right for 20 seconds and has already moved left
         if not self.moved_right and self.timer >= 20000:  # Adjust the timer based on your desired time limit
             reward += 10  # Gain 10 points for moving left
-            self.env.unwrapped._x_position -= 2  # Move left by 10 spaces
+            self.env.unwrapped._x_position -= 2  # Move left by 2 spaces
 
         # Increment the timer if Mario hasn't moved right
         if not self.moved_right:
@@ -113,7 +113,7 @@ class CustomRewardEnv(gym.Wrapper):
         return reward
 
 
-
+# Write to a file. If the file exists, delete it and create a new one.
 def write_to_file(filename, data, mode='w', encoding='utf-8'):
     if os.path.exists(filename):
         os.remove(filename)
@@ -131,7 +131,7 @@ def create_folders():
 
 
 def create_checkpoint_image():
-    # Create the checkpoint image (replace this with your desired image generation logic)
+    # TODO Check to see if this is needed or not
     image_data = "Please Wait.jpg"
     with open("checkpoint_image.jpg", "wb") as image_file:
         image_file.write(image_data)
@@ -157,7 +157,7 @@ def update_text_files(total_rewards, completed_episodes, total_episodes):
             previous_rewards = int(f.read())
 
     write_to_file(average_file, f"Previous Reward Avg: {previous_rewards} | Current Reward Avg: {int(np.mean(total_rewards))}")
-    write_to_file(previous_rewards_file, str(int(np.mean(total_rewards))))
+    write_to_file(previous_rewards_file, str(int(np.mean(total_rewards)))) 
 
 
 def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_max=1):
@@ -165,22 +165,22 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
 
     env = gym_super_mario_bros.make('SuperMarioBros-v0')
     env = CustomRewardEnv(env)  # Wrap the environment with the custom reward wrapper
-    env = wrapper.create_mario_env(env)  # Apply other wrappers to the environment
+    env = wrapper.create_mario_env(env) # Wrap the environment with the custom wrapper
     observation_space = env.observation_space.shape
-    action_space = env.action_space.n
+    action_space = env.action_space.n 
     agent = model.DQNAgent(
-        state_space=observation_space,
-        action_space=action_space,
-        max_memory_size=30000,
-        batch_size=64,
-        gamma=0.9,
-        lr=0.00025,
-        dropout=0.2,
-        exploration_max=1.0,
-        exploration_min=0.05,
-        exploration_decay=0.99,
-        double_dqn=double_dqn,
-        pretrained=pretrained
+        state_space=observation_space, 
+        action_space=action_space, 
+        max_memory_size=30000, # 30000
+        batch_size=64, # 64
+        gamma=0.9, # 0.9
+        lr=0.00025, # 0.00025
+        dropout=0.2, # 0.2
+        exploration_max=1.0, # 1.0
+        exploration_min=0.05, # 0.05
+        exploration_decay=0.99, # 0.99
+        double_dqn=double_dqn, # True
+        pretrained=pretrained # True
     )
 
     # Restart the environment for each episode
@@ -210,11 +210,11 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
         steps = 0
         episode_num = completed_episodes + ep_num + 1
 
-        agent.writer.add_scalar('Exploration Rate', agent.exploration_rate, episode_num)  # Updated
-        agent.writer.add_scalar('Total Reward', total_reward, episode_num)  # Updated
-        agent.writer.add_scalar('Steps', steps, episode_num)  # Updated
-        agent.writer.add_scalar('Average Reward', np.mean(total_rewards[-10:]), episode_num)  # Updated
-        agent.writer.add_scalar('Average Steps', np.mean(total_rewards[-10:]), episode_num)  # Updated
+        agent.writer.add_scalar('Exploration Rate', agent.exploration_rate, episode_num) 
+        agent.writer.add_scalar('Total Reward', total_reward, episode_num)  
+        agent.writer.add_scalar('Steps', steps, episode_num)  
+        agent.writer.add_scalar('Average Reward', np.mean(total_rewards[-10:]), episode_num)  
+        agent.writer.add_scalar('Average Steps', np.mean(total_rewards[-10:]), episode_num) 
 
         while True:
             if training_mode:
@@ -264,7 +264,7 @@ def run(training_mode, pretrained, double_dqn, num_episodes=1000, exploration_ma
             torch.save(agent.STATE2_MEM, "pkl_files/STATE2_MEM.pt")
             torch.save(agent.DONE_MEM, "pkl_files/DONE_MEM.pt")
 
-            update_text_files(total_rewards, episode_num, total_episodes)  # Updated
+            update_text_files(total_rewards, episode_num, total_episodes) 
 
             print("Episode {} score = {}, average score = {}".format(
                 episode_num, total_rewards[-1], np.mean(total_rewards))
