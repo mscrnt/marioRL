@@ -42,8 +42,8 @@ python mario_trainer.py
 To test the agent, you can run the following command:
 
 In mario_trainer.py, Change:
-run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1) 
-To: 
+run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1)
+To:
 run(training_mode=False, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1) 
 
 ```bash
@@ -51,7 +51,7 @@ python mario_trainer.py
 ``` 
 
 To resume training the agent from checkpoint, change the following in mario_trainer.py:
-run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1) 
+run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1)
 To:
 run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1) 
     
