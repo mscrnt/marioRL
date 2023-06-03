@@ -21,6 +21,13 @@ class DQNAgent:
         self.action_space = action_space
         self.double_dqn = double_dqn
         self.pretrained = pretrained
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        # Define DQN Layers
+        self.state_space = state_space
+        self.action_space = action_space
+        self.double_dqn = double_dqn
+        self.pretrained = pretrained
         self.device = 'cuda' #if torch.cuda.is_available() else 'cpu'
 
         self.stuck_counter = 0
@@ -32,8 +39,8 @@ class DQNAgent:
 
         # Double DQN network
         if self.double_dqn:  
-            self.local_net = DQNSolver(state_space, action_space).to(self.device)
-            self.target_net = DQNSolver(state_space, action_space).to(self.device)
+            self.local_net = DQNSolver(state_space, action_space, dropout).to(self.device)
+            self.target_net = DQNSolver(state_space, action_space, dropout).to(self.device)
             
             if self.pretrained:
                 self.local_net.load_state_dict(torch.load("pkl_files/DQN1.pt", map_location=torch.device(self.device)))
@@ -44,7 +51,7 @@ class DQNAgent:
             self.step = 0
         # DQN network
         else:  
-            self.dqn = DQNSolver(state_space, action_space).to(self.device)
+            self.dqn = DQNSolver(state_space, action_space, dropout).to(self.device)
             
             if self.pretrained:
                 self.dqn.load_state_dict(torch.load("pkl_files/DQN.pt", map_location=torch.device(self.device)))
@@ -166,8 +173,3 @@ class DQNAgent:
         self.global_step += 1
         loss.backward() # Compute gradients
         self.optimizer.step() # Backpropagate error
-
-        self.exploration_rate *= self.exploration_decay
-        
-        # Makes sure that exploration rate is always at least 'exploration min'
-        self.exploration_rate = max(self.exploration_rate, self.exploration_min)

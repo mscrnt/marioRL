@@ -121,7 +121,7 @@ class DQNSolver(nn.Module):
     """
     Convolutional Neural Net with 3 conv layers and two linear layers
     """
-    def __init__(self, input_shape, n_actions):
+    def __init__(self, input_shape, n_actions, dropout=0.5):
         super(DQNSolver, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4),
@@ -136,6 +136,7 @@ class DQNSolver(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(conv_out_size, 512),
             nn.ReLU(),
+            nn.Dropout(dropout),
             nn.Linear(512, n_actions)
         )
     
