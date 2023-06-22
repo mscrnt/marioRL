@@ -17,20 +17,20 @@ class CustomRewardEnv(gym.Wrapper):
         self.previous_time = None
 
 
-        # # Configure logging with RotatingFileHandler
-        # log_file = 'logs/reward_log.txt'
-        # max_file_size = 1024 * 1024  # 1 MB
-        # backup_count = 5
+        # Configure logging with RotatingFileHandler
+        log_file = 'logs/reward_log.txt'
+        max_file_size = 1024 * 1024  # 1 MB
+        backup_count = 5
 
-        # self.logger = logging.getLogger(__name__)
-        # self.logger.setLevel(logging.INFO)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
 
-        # formatter = logging.Formatter('%(asctime)s - %(message)s')
+        formatter = logging.Formatter('%(asctime)s - %(message)s')
 
-        # # Create a file handler and set its formatter
-        # file_handler = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count)
-        # file_handler.setFormatter(formatter)
-        # self.logger.addHandler(file_handler)
+        # Create a file handler and set its formatter
+        file_handler = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count)
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(file_handler)
 
         self.current_episode = 0
 
@@ -70,11 +70,11 @@ class CustomRewardEnv(gym.Wrapper):
             self.previous_x_position = self.env.unwrapped._x_position
 
 
-        # Large reward for completing a level
-        if self.env.unwrapped._flag_get:
-            level_completion_reward = 200
+        # Reward for beating the level
+        if (info.get('flag_get') is not None and info['flag_get']):
+            level_completion_reward = 100
             reward += level_completion_reward
-            #self.logger.info(f"Step: {self.current_episode} - Level completion reward: {level_completion_reward}")
+            self.logger.info(f"Step: {self.current_episode} - Level completion reward: {level_completion_reward}")
 
         # Small penalty for NOOP
         if action == 0:
@@ -93,12 +93,12 @@ class CustomRewardEnv(gym.Wrapper):
             reward += 5
             self.mario_is_tall = True
             #self.logger.info(f"Step: {self.current_episode} - Transform reward: 5")
-        else:
-            self.mario_is_tall = False
+        # else:
+        #     self.mario_is_tall = False
 
-        if info['status'] == 'small' and self.previous_player_state == 'tall':
-            self.mario_is_tall = False
-            reward -= 2
+        # if info['status'] == 'small' and self.previous_player_state == 'tall':
+        #     self.mario_is_tall = False
+            # reward -= 2
             #self.logger.info(f"Step: {self.current_episode} - Transform penalty: -2")
 
         # # Reward for transforming to Fire Mario
@@ -126,16 +126,16 @@ class CustomRewardEnv(gym.Wrapper):
         #     self.gone_up_vine = False
 
         # Reward for pressing down after landing
-        if self.env.unwrapped._y_position > self.start_y_position and action == 32: # 32 is the action for pressing down         
-            press_down_reward = .1
-            reward += press_down_reward
+        # if self.env.unwrapped._y_position > self.start_y_position and action == 32: # 32 is the action for pressing down         
+        #     press_down_reward = .1
+        #     reward += press_down_reward
             #self.logger.info(f"Step: {self.current_episode} - Pressed down after landing reward: {press_down_reward}")
 
-        # Large reward for completing a level
-        if self.env.unwrapped._flag_get:
-            level_completion_reward = 200
-            reward += level_completion_reward
-            #self.logger.info(f"Step: {self.current_episode} - Level completion reward: {level_completion_reward}")
+        # # Large reward for completing a level
+        # if self.env.unwrapped._flag_get:
+        #     level_completion_reward = 200
+        #     reward += level_completion_reward
+        #     self.logger.info(f"Step: {self.current_episode} - Level completion reward: {level_completion_reward}")
 
         # # Reward for entering a reversed-L pipe
         # if self.env.unwrapped._player_state == 2:
@@ -150,6 +150,7 @@ class CustomRewardEnv(gym.Wrapper):
             time_reward = self.env.unwrapped._time - self.previous_time
             if time_reward >= 0:
                 time_reward = 0
+            time_reward *= 0.5  # Scaling factor to reduce the impact of time reward
             reward += time_reward
             #self.logger.info(f"Step: {self.current_episode} - Time reward: {time_reward}")
         self.previous_time = self.env.unwrapped._time

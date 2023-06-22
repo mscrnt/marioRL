@@ -13,7 +13,7 @@ This repository contains code for training a Deep Q-Network (DQN) agent to play 
 
 ## Introduction
 
-The Super Mario DQN Agent is designed to train an agent using Deep Q-Networks to play the Super Mario Bros game. The agent uses reinforcement learning to learn an optimal policy for playing the game.
+This repository contains code for training a Deep Q-Network (DQN) agent to play the Super Mario Bros game using Gym and OpenAI baselines. The code is based on the [gym-super-mario-bros](https://github.com/Kautenja/gym-super-mario-bros) project by Christian Kauten.
 
 ## Installation
 
@@ -42,8 +42,8 @@ python mario_trainer.py
 To test the agent, you can run the following command:
 
 In mario_trainer.py, Change:
-run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1)
-To:
+run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1) 
+To: 
 run(training_mode=False, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1) 
 
 ```bash
@@ -51,7 +51,7 @@ python mario_trainer.py
 ``` 
 
 To resume training the agent from checkpoint, change the following in mario_trainer.py:
-run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1)
+run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1) 
 To:
 run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, exploration_max=1) 
     
@@ -61,29 +61,16 @@ run(training_mode=True, pretrained=True, double_dqn=True, num_episodes=200000, e
 
 ## Code Explanation
 
-The code is divided into 3 files:
+The code is divided into several files:
 
-1. `mario_trainer.py`: This file contains the code for training the agent.
-2. `model.py`: This file contains the code for the agent.
-3. `wrapper.py`: This file contains the code for the environment wrapper.
+1. `trainer.py`: This file contains the main function for training the agent on all levels of the Super Mario Bros game.
+2. `model.py`: This file contains the definition of the DQNAgent class, which represents the agent's deep Q-network model.
+3. `rewards.py`: This file contains the definition of the CustomRewardEnv class, which is a wrapper around the Super Mario Bros environment and customizes the reward calculation for the agent.
+4. `wrapper.py`: This file contains the definition of the create_mario_env function, which applies wrappers to the environment to preprocess the observations.
 
-## Key Features
+The trainer.py file contains the train_all_levels function, which trains the agent on all levels of the Super Mario Bros game. The train_on_level function is called for each level and handles the training process for that level. The DQNAgent class in the model.py file represents the agent's deep Q-network model, and the CustomRewardEnv class in the rewards.py file customizes the reward calculation for the agent.
 
-The code is broken up so you shouldn't need to touch the model.py or wrapper.py files. You can simply run the mario_trainer.py file to train the agent.
 
-mario_trainer.py contains the following functions:
-
-```python
-def run(training_mode=True, pretrained=False, double_dqn=True, num_episodes=200000, exploration_max=1)
-```
-
-This function is used to train the agent. It takes in the following parameters:
-
-1. `training_mode`: This parameter is used to specify whether the agent should be trained or not. If this parameter is set to `True`, the agent will be trained. If this parameter is set to `False`, the agent will not be trained.
-2. `pretrained`: This parameter is used to specify whether the agent should be trained from scratch or from a checkpoint. If this parameter is set to `True`, the agent will be trained from a checkpoint. If this parameter is set to `False`, the agent will be trained from scratch.
-3. `double_dqn`: This parameter is used to specify whether the agent should use Double DQN or not. If this parameter is set to `True`, the agent will use Double DQN. If this parameter is set to `False`, the agent will not use Double DQN.
-4. `num_episodes`: This parameter is used to specify the number of episodes the agent should be trained for.
-5. `exploration_max`: This parameter is used to specify the maximum exploration rate for the agent.
 
 The run function contains the following code:
 
@@ -93,9 +80,6 @@ batch_size=64,
 gamma=0.9,
 lr=0.00025,
 dropout=0.2,
-exploration_max=1.0,
-exploration_min=0.05,
-exploration_decay=0.99,
 ```
 
 These parameters are used to specify the following:
@@ -116,7 +100,7 @@ Modify these parameters to change the behavior of the agent.
 if (ep_num + 1) % 100 == 0:
 ```
 
-This code is used to create a checkpoint every 100 episodes. You can modify this code to create a checkpoint every `n` episodes.
+<!-- This code is used to create a checkpoint every 100 episodes. You can modify this code to create a checkpoint every `n` episodes.
 
 ```python
 def write_to_file(filename, data, mode='w', encoding='utf-8'):
@@ -155,7 +139,7 @@ def update_text_files(total_rewards, completed_episodes, total_episodes):
 
     write_to_file(average_file, f"Previous Reward Avg: {previous_rewards} | Current Reward Avg: {int(np.mean(total_rewards))}")
     write_to_file(previous_rewards_file, str(int(np.mean(total_rewards))))
-```
+``` -->
 
 This code is used to create the folders and update the text files. You can modify this code to create the folders and update the text files as per your requirements. These will update the text files with the number of episodes completed, the average reward, and the current reward. These files will update everytime a checkpoint is created.
 
@@ -262,6 +246,10 @@ This code is used to calculate the reward for the agent. You can modify this cod
 12. NOOP
 
 
+## Credits
+This project is based on the gym-super-mario-bros project by Christian Kauten. Make sure to check out the project for the Super Mario Bros environment for OpenAI Gym.
 
+## License
+The code in this repository is available under the MIT License. Please refer to the LICENSE file for more information. The Super Mario Bros environment used in this project is part of the gym-super-mario-bros project by Christian Kauten.
 
 
