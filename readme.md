@@ -22,7 +22,7 @@ To run the Super Mario DQN Agent, you need to install the required dependencies.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/mscrnt/marioRL.git && cd marioRL# Super Mario DQN Agent
+   git clone https://github.com/mscrnt/marioRL.git && cd marioRL
 
 This repository contains code for training a Deep Q-Network (DQN) agent to play the Super Mario Bros game using Gym and OpenAI baselines.
 
